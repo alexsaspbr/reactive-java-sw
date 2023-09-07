@@ -59,4 +59,26 @@ public class ProductService {
 
     }
 
+    public Mono<ResponseDTO> update(ProductDTO productDTO) {
+
+        Mono<Product> productMono = this.productRepository.findByCode(productDTO.getCode());
+
+        return productMono.flatMap((existingProduct) -> {
+            existingProduct.setCode(productDTO.getCode());
+            existingProduct.setName(productDTO.getName());
+            existingProduct.setDescription(productDTO.getDescription());
+            existingProduct.setAmount(productDTO.getAmount());
+            return this.productRepository.save(existingProduct);
+        }).map(product -> new ResponseDTO<>("Produto alterado com sucesso!",
+                this.productConverter.toProductDTO(product),
+                LocalDateTime.now()));
+    }
+
+    public Mono<ResponseDTO> delete(String code) {
+        return this.productRepository
+                        .deleteByCode(code).map((product) -> new ResponseDTO<>("Produto removido com sucesso!",
+                                                                    null,
+                                                                         LocalDateTime.now()));
+    }
+
 }

@@ -39,4 +39,17 @@ public class ProductController {
         return this.productService.findByCode(code);
     }
 
+    @PutMapping
+    @ResponseStatus(value = HttpStatus.OK)
+    @Operation(description = "Update a product")
+    public Mono<ResponseDTO> update(@RequestBody ProductDTO productDTO){
+        return this.productService.update(productDTO);
+    }
+
+    @DeleteMapping("{reference}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public Mono<ResponseDTO> delete(@PathVariable("code") String code) {
+        return this.productService.delete(code);
+    }
+
 }

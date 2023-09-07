@@ -10,4 +10,5 @@ public interface ProductRepository extends ReactiveMongoRepository<Product, Stri
 
     Mono<Product> findByCode(String code);
 
+    Mono<Void> deleteByCode(String code);
 }
