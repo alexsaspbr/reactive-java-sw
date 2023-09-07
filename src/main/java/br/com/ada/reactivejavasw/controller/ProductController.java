@@ -46,7 +46,7 @@ public class ProductController {
         return this.productService.update(productDTO);
     }
 
-    @DeleteMapping("{reference}")
+    @DeleteMapping("{code}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public Mono<ResponseDTO> delete(@PathVariable("code") String code) {
         return this.productService.delete(code);
