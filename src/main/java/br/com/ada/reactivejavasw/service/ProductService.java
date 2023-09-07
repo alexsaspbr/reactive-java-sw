@@ -7,6 +7,7 @@ import br.com.ada.reactivejavasw.model.Product;
 import br.com.ada.reactivejavasw.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
@@ -21,7 +22,7 @@ public class ProductService {
     private ProductRepository productRepository;
 
 
-    public Mono<ResponseDTO<ProductDTO>> create(ProductDTO productDTO) {
+    public Mono<ResponseDTO> create(ProductDTO productDTO) {
 
         //converter dto em model
         Product product = this.productConverter.toProduct(productDTO);
@@ -31,8 +32,30 @@ public class ProductService {
         return productMono
                 .map((productDocument) -> new ResponseDTO("Produto cadastrado com sucesso!",
                         this.productConverter.toProductDTO(productDocument),
+                        LocalDateTime.now()))
+                .onErrorReturn(new ResponseDTO("Erro ao cadastrar produto",
+                        new ProductDTO(),
                         LocalDateTime.now()));
 
+
+    }
+
+    public Flux<ResponseDTO<ProductDTO>> getAll() {
+        Flux<Product> productFlux = this.productRepository.findAll();
+        return productFlux
+                .map(product -> new ResponseDTO("Listagem de produtos retornada com sucesso!",
+                                              this.productConverter.toProductDTO(product),
+                                              LocalDateTime.now()
+        ));
+    }
+
+    public Mono<ResponseDTO<ProductDTO>> findByCode(String code) {
+        Mono<Product> productMono = this.productRepository.findByCode(code);
+        return productMono
+                .map(product -> new ResponseDTO("Busca por code retornada com sucesso!",
+                                               this.productConverter.toProductDTO(product),
+                                               LocalDateTime.now()
+                        ));
 
     }
 
